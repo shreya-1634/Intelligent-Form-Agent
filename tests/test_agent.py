@@ -1,7 +1,7 @@
 ##
 ## Integration tests for the agent.py module
 ##
-## These tests use 'pytest-mock' [19] to "mock" the
+## These tests use 'pytest-mock' to "mock" the
 ## slow-loading 'transformers.pipeline' function. This allows us to
 ## test our agent's internal logic without downloading or
 ## running the actual multi-GB NLP models.
@@ -24,7 +24,7 @@ def mocked_agent():
     ## the 'pipeline' call from the 'transformers' library.
     ## 
     ## Instead of loading the real models, we substitute
-    ## MagicMock objects.[19]
+    ## MagicMock objects.
     ##
     ## We patch 'src.agent.pipeline', which is where 'agent.py' imports it
     with patch('src.agent.pipeline') as mock_pipeline:
