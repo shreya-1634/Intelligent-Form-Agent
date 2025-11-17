@@ -177,7 +177,7 @@ pytest-mock         A pytest plugin used to "fake" the behavior of the large, sl
 
 **NLP Models:** We use transformers pipelines as they provide a simple, state-of-the-art API for both QA (distilbert-base-cased-distilled-squad) and Summarization (sshleifer/distilbart-cnn-12-6).
 
-## 5. Creativity Extensions
+## 8. Creativity Extensions
 As per the assignment , the following creative additions were included:
 
 **Holistic Analysis:** The holistic command (src/main.py) and the process_multiple_forms_holistic method (src/agent.py) directly satisfy the "holistic insights" requirement using pandas.
