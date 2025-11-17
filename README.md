@@ -44,7 +44,7 @@ your_project/
 
 ## 3. How to Set Up the Environment
 This project uses Python 3.9+.
-1. **Clone the repository:**bash git clone https://github.com/shreya-1634/Intelligent-Form-Agent.git cd Intelligent-Form-Agent
+1. **Clone the repository:** bash git clone https://github.com/shreya-1634/Intelligent-Form-Agent.git cd Intelligent-Form-Agent
 2. Create a virtual environment (recommended):
 ```Bash
 python -m venv.venv
