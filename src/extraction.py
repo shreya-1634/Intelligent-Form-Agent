@@ -4,7 +4,7 @@
 ## This module uses PyMuPDF (fitz) to extract text content from PDF files.
 ## It is designed to provide a clean text "context" for NLP models.
 ## We use PyMuPDF because it is fast and can extract text with layout
-## information, as seen in available documentation.[1, 2]
+## information.
 ##
 
 import fitz  ## PyMuPDF
@@ -24,7 +24,7 @@ def extract_text_from_pdf(pdf_path: str) -> str:
         logger.error(f"Failed to open PDF at {pdf_path}: {e}")
         return ""
 
-    full_text =  ## <-- FIX: Was an empty line
+    full_text =  ## <-- This is the corrected line from your Colab
     logger.info(f"Extracting text from {doc.page_count} pages...")
 
     for page_num in range(doc.page_count):
@@ -50,13 +50,13 @@ def extract_structured_data(pdf_path: str) -> List]:
         doc = fitz.open(pdf_path)
     except Exception as e:
         logger.error(f"Failed to open PDF at {pdf_path}: {e}")
-        return
+        return ## <-- Return empty list on failure
         
-    all_page_data =  ## <-- FIX: Was an empty line
+    all_page_data =  ## <-- This is the corrected line from your Colab
     for page_num in range(doc.page_count):
         try:
             page = doc.load_page(page_num)
-            ## "dict" provides a rich, hierarchical structure of the text [2]
+            ## "dict" provides a rich, hierarchical structure of the text [1, 3, 2]
             page_data = page.get_text("dict", flags=fitz.TEXTFLAGS_TEXT)
             all_page_data.append(page_data)
         except Exception as e:
