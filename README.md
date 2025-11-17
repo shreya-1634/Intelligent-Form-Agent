@@ -14,7 +14,8 @@ The core of the agent is built using PyMuPDF for high-performance PDF extraction
 This repository uses a professional Python project structure to ensure a clean separation of concerns.
 
 File-by-File Explanation
-````
+
+```
 your_project/
 ├── README.md                                     \# (This file) The main project documentation explaining what the project is and how to use it.
 ├── requirements.txt                              \# A list of all Python dependencies (transformers, pymupdf, pandas, etc.) needed to run the project.
