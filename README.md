@@ -31,7 +31,7 @@ your_project/
 │  ├── data/dummy.pdf                             \# A small, non-sensitive sample PDF used by the test suite.
 
 ├── /notebooks	                                  \# Contains Jupyter notebooks for experiments, model testing, and exploratory work.   
-│   ├── notebooks/01_Agent_Exploration.ipynb	  \# An interactive notebook to test PyMuPDF extraction  and transformers pipelines  on the fly.   
+│   ├── notebooks/01_Agent_Exploration.ipynb	    \# An interactive notebook to test PyMuPDF extraction  and transformers pipelines  on the fly.   
 
 ├── /tests                                        \# Contains all automated tests for quality assurance.
 │   ├── tests/test_extraction.py                  \# Unit Tests for the extraction.py module. It checks if the PDF parser can correctly read the dummy.pdf.
