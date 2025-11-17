@@ -15,6 +15,7 @@ This repository uses a professional Python project structure to ensure a clean s
 
 File-by-File Explanation
 
+```
 your_project/
 ├── README.md                                     \# (This file) The main project documentation explaining what the project is and how to use it.
 ├── requirements.txt                              \# A list of all Python dependencies (transformers, pymupdf, pandas, etc.) needed to run the project.
@@ -39,6 +40,7 @@ your_project/
 
 ├── /docs                                         \# A folder for supplementary documentation, such as architecture diagrams or detailed instructions.
 │   ├── docs/.gitkeep	                          \# A placeholder file to ensure the empty directory is tracked by Git.
+````
 
 ## 3. How to Set Up the Environment
 This project uses Python 3.9+.
