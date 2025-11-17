@@ -1,1 +1,12 @@
+# Ignore all PDF files in this directory
+*.pdf
+*.png
+*.jpg
 
+# But *do not* ignore the dummy file, which we need for testing
+!dummy.pdf
+
+# Ignore other common data formats
+*.csv
+*.jsonl
+*.json
