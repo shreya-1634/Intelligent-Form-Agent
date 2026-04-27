@@ -59,17 +59,35 @@ class IntelligentFormAgent:
             logger.error(f"API Error: {e}")
             return []
 
-    def process_multiple_forms_holistic(self, pdf_directory: str, question: str) -> pd.DataFrame:
-        # (The logic for holistic remains the same, just calling the updated QA function)
+   def process_multiple_forms_holistic(self, pdf_directory: str, question: str) -> pd.DataFrame:
+        logger.info(f"Processing holistic insights...")
+        
         pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith(".pdf")]
+        if not pdf_files:
+            return pd.DataFrame(columns=["file", "question", "answer", "score"])
+
         results = []
         for pdf_file in pdf_files:
             file_path = os.path.join(pdf_directory, pdf_file)
+            
+            # Get the result from our existing QA function
             qa_result = self.process_single_form_qa(file_path, question)
+            
+            # Extract the answer string
+            raw_answer = qa_result.get("answer", "N/A")
+            
+            # --- CLEANING LOGIC FOR HOLISTIC TAB ---
+            # This removes the double asterisks for a cleaner table view
+            clean_answer = raw_answer.replace("**", "")
+            
             results.append({
-                "file": pdf_file, 
-                "question": question, 
-                "answer": qa_result.get("answer"), 
+                "file": pdf_file,
+                "question": question,
+                "answer": clean_answer,
                 "score": 1.0
             })
+            
+            # Small delay to respect free-tier rate limits
+            time.sleep(2) 
+        
         return pd.DataFrame(results)
