@@ -57,7 +57,7 @@ Intelligent-Form-Agent/
 ## ⚙️ Installation & Setup
 ### 1. Clone the repository:
 ```bash
-git clone [https://github.com/shreya-1634/Intelligent-Form-Agent.git](https://github.com/shreya-1634/Intelligent-Form-Agent.git)
+git clone https://github.com/shreya-1634/Intelligent-Form-Agent.git
 cd Intelligent-Form-Agent
 ```
 ### 2. Create and activate a virtual environment:
