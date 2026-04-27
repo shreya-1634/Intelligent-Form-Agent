@@ -52,8 +52,8 @@ def main():
 
     # --- UI Tabs for Functionalities ---
     tab1, tab2, tab3 = st.tabs(["Single QA", "Summarization", "Holistic Insights"])
-
-    # --- Tab 1: Single Form Question Answering ---
+    
+   # --- Tab 1: Single Form Question Answering ---
     with tab1:
         st.header("Ask a Question")
         target_file = st.selectbox("Select a file", [f.name for f in uploaded_files], key="qa_select")
@@ -63,6 +63,10 @@ def main():
             if question:
                 target_path = os.path.join(temp_dir, target_file)
                 with st.spinner("Analyzing document..."):
+                    
+                    # ---> THIS IS THE LINE THAT WAS MISSING <---
+                    result = agent.process_single_form_qa(target_path, question)
+                    
                     # Check if the AI is confident in its answer
                     if result.get('score', 0.0) < 0.15:
                         st.warning("**Answer:** I could not find a clear answer in the text.")
@@ -70,7 +74,8 @@ def main():
                         st.success(f"**Answer:** {result.get('answer', 'N/A')}")
                         
                     st.caption(f"Confidence Score: {result.get('score', 0.0):.4f}")
-
+            else:
+                st.warning("Please enter a question.")
     # --- Tab 2: Summarization ---
     with tab2:
         st.header("Generate Summary")
