@@ -29,24 +29,24 @@ class IntelligentFormAgent:
     ##
     
     def __init__(self, qa_model: str = QA_MODEL, summ_model: str = SUMMARIZATION_MODEL):
-        ##
-        ## Initializes the agent and loads the NLP models.
-        ## This is done once to avoid reloading models for every call.
-        ##
-        logger.info(f"Initializing agent...")
-        try:
-            ## Load the Question-Answering pipeline
-            logger.info(f"Loading QA model: {qa_model}")
-            self.qa_pipeline: Pipeline = pipeline("question-answering", model=qa_model)
-            
-            ## Load the Summarization pipeline
-            logger.info(f"Loading Summarization model: {summ_model}")
-            self.summarization_pipeline: Pipeline = pipeline("summarization", model=summ_model)
-            
-            logger.info("Agent initialized successfully.")
-        except Exception as e:
-            logger.error(f"Failed to load NLP models: {e}")
-            raise
+    logger.info("Initializing agent in low-memory mode...")
+    try:
+        # QA Pipeline: Use low_cpu_mem_usage if supported
+        self.qa_pipeline = pipeline(
+            "question-answering", 
+            model=qa_model, 
+            device=-1 # Force CPU [cite: 189, 192]
+        )
+        
+        # Summarization Pipeline
+        self.summarization_pipeline = pipeline(
+            "summarization", 
+            model=summ_model, 
+            device=-1
+        )
+    except Exception as e:
+        logger.error(f"Failed to load: {e}")
+        raise
 
     def process_single_form_qa(self, pdf_path: str, question: str) -> Dict[str, Any]:
         ##
