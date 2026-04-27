@@ -24,7 +24,7 @@ def extract_text_from_pdf(pdf_path: str) -> str:
         logger.error(f"Failed to open PDF at {pdf_path}: {e}")
         return ""
 
-    full_text =  ## <-- This is the corrected line from your Colab
+    full_text = [] ## <-- This is the corrected line from your Colab
     logger.info(f"Extracting text from {doc.page_count} pages...")
 
     for page_num in range(doc.page_count):
@@ -52,7 +52,7 @@ def extract_structured_data(pdf_path: str) -> List]:
         logger.error(f"Failed to open PDF at {pdf_path}: {e}")
         return ## <-- Return empty list on failure
         
-    all_page_data =  ## <-- This is the corrected line from your Colab
+    all_page_data = [] ## <-- This is the corrected line from your Colab
     for page_num in range(doc.page_count):
         try:
             page = doc.load_page(page_num)
