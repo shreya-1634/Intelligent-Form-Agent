@@ -1,44 +1,28 @@
-##
-## The Intelligent Form Agent
-##
-## This module defines the core IntelligentFormAgent class.
-## It loads and orchestrates the NLP pipelines from transformers
-## to perform QA, summarization, and holistic analysis.
-##
-
 import logging
 import os
 from transformers import pipeline, Pipeline
 from typing import List, Dict, Any
 import pandas as pd
 
-## Local module import (This works in the package structure)
 from src.extraction import extract_text_from_pdf
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-## Define standard models.
 QA_MODEL = "distilbert-base-cased-distilled-squad"
 SUMMARIZATION_MODEL = "sshleifer/distilbart-cnn-12-6"
 
-
 class IntelligentFormAgent:
-    ##
-    ## An agent capable of reading, extracting, and explaining forms.
-    ##
     
-   def __init__(self, qa_model: str = QA_MODEL, summ_model: str = SUMMARIZATION_MODEL):
+    def __init__(self, qa_model: str = QA_MODEL, summ_model: str = SUMMARIZATION_MODEL):
         logger.info("Initializing agent in low-memory mode...")
         try:
-            # QA Pipeline: Use low_cpu_mem_usage if supported
             self.qa_pipeline = pipeline(
                 "question-answering", 
                 model=qa_model, 
-                device=-1 # Force CPU
+                device=-1 # Force CPU for low memory limits
             )
             
-            # Summarization Pipeline
             self.summarization_pipeline = pipeline(
                 "summarization", 
                 model=summ_model, 
@@ -50,9 +34,6 @@ class IntelligentFormAgent:
             raise
 
     def process_single_form_qa(self, pdf_path: str, question: str) -> Dict[str, Any]:
-        ##
-        ## Performs QA on a single form. 
-        ##
         logger.info(f"Processing QA for '{pdf_path}'...")
         context = extract_text_from_pdf(pdf_path)
         
@@ -65,17 +46,14 @@ class IntelligentFormAgent:
         return result
 
     def process_single_form_summary(self, pdf_path: str, min_length: int = 30, max_length: int = 150) -> List:
-        ##
-        ## Generates a summary of one form. 
-        ##
         logger.info(f"Processing summary for '{pdf_path}'...")
         context = extract_text_from_pdf(pdf_path)
         
         if not context:
             logger.warning("No text extracted. Cannot perform summarization.")
-            return ## <-- Return empty list
+            return []
         
-        truncated_context = context[:4096] ## Truncate to a safe length
+        truncated_context = context[:4096] 
         
         result_list = self.summarization_pipeline(
             truncated_context, 
@@ -87,9 +65,6 @@ class IntelligentFormAgent:
         return result_list 
 
     def process_multiple_forms_holistic(self, pdf_directory: str, question: str) -> pd.DataFrame:
-        ##
-        ## Performs holistic insights across multiple forms. 
-        ##
         logger.info(f"Processing holistic insights for directory '{pdf_directory}'...")
         
         try:
@@ -102,7 +77,7 @@ class IntelligentFormAgent:
             logger.warning(f"No PDF files found in '{pdf_directory}'.")
             return pd.DataFrame(columns=["file", "question", "answer", "score"])
 
-        results =  []
+        results = []
         for pdf_file in pdf_files:
             file_path = os.path.join(pdf_directory, pdf_file)
             logger.info(f"Querying file: {pdf_file}...")
