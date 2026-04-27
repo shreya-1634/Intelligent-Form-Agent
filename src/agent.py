@@ -59,12 +59,17 @@ class IntelligentFormAgent:
             logger.error(f"API Error: {e}")
             return []
 
- def process_multiple_forms_holistic(self, pdf_directory: str, question: str) -> pd.DataFrame:
+def process_multiple_forms_holistic(self, pdf_directory: str, question: str) -> pd.DataFrame:
+        # (The logic for holistic remains the same, just calling the updated QA function)
         pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith(".pdf")]
         results = []
         for pdf_file in pdf_files:
             file_path = os.path.join(pdf_directory, pdf_file)
             qa_result = self.process_single_form_qa(file_path, question)
-            results.append({"file": pdf_file, "question": question, "answer": qa_result.get("answer"), "score": 1.0})
-            time.sleep(2) # Mandatory 2-second gap to avoid hitting RPM limits
+            results.append({
+                "file": pdf_file, 
+                "question": question, 
+                "answer": qa_result.get("answer"), 
+                "score": 1.0
+            })
         return pd.DataFrame(results)
