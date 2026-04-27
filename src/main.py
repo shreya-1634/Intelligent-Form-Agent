@@ -63,11 +63,13 @@ def main():
             if question:
                 target_path = os.path.join(temp_dir, target_file)
                 with st.spinner("Analyzing document..."):
-                    result = agent.process_single_form_qa(target_path, question)
-                    st.success(f"**Answer:** {result.get('answer', 'N/A')}")
+                    # Check if the AI is confident in its answer
+                    if result.get('score', 0.0) < 0.15:
+                        st.warning("**Answer:** I could not find a clear answer in the text.")
+                    else:
+                        st.success(f"**Answer:** {result.get('answer', 'N/A')}")
+                        
                     st.caption(f"Confidence Score: {result.get('score', 0.0):.4f}")
-            else:
-                st.warning("Please enter a question.")
 
     # --- Tab 2: Summarization ---
     with tab2:
