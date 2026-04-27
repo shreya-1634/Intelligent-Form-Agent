@@ -7,10 +7,10 @@ Built with a focus on memory efficiency and resilience, this agent utilizes ligh
 
 ## ✨ Features
 
-* 🔍 Single Document Q&A:** Ask targeted questions (e.g., "What are the core job requirements?", "Who is the invoice billed to?") and get precise, generative answers based on the document's extracted context.
-* 📝 Automated Summarization:** Instantly generate clean, professional summaries of lengthy PDFs to quickly grasp key information without reading pages of text.
-* 📊 Holistic Insights:** Ask a single question across an entire batch of uploaded PDFs simultaneously. Results are aggregated into a clean, easy-to-read tabular DataFrame—perfect for cross-referencing resumes, invoices, or financial reports.
-* 🛡️ Production-Ready Reliability:** Includes built-in exponential backoff and request pacing to seamlessly handle API rate limits (`429 RESOURCE_EXHAUSTED`) during bulk document processing.
+* **🔍 Single Document Q&A:** Ask targeted questions (e.g., "What are the core job requirements?", "Who is the invoice billed to?") and get precise, generative answers based on the document's extracted context.
+* **📝 Automated Summarization:** Instantly generate clean, professional summaries of lengthy PDFs to quickly grasp key information without reading pages of text.
+* **📊 Holistic Insights:** Ask a single question across an entire batch of uploaded PDFs simultaneously. Results are aggregated into a clean, easy-to-read tabular DataFrame—perfect for cross-referencing resumes, invoices, or financial reports.
+* **🛡️ Production-Ready Reliability:** Includes built-in exponential backoff and request pacing to seamlessly handle API rate limits (`429 RESOURCE_EXHAUSTED`) during bulk document processing.
 
 ## 🛠️ Tech Stack
 **Frontend & Framework**
