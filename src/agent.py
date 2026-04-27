@@ -63,7 +63,7 @@ class IntelligentFormAgent:
         logger.debug(f"QA Pipeline raw output: {result}")
         return result
 
-    def process_single_form_summary(self, pdf_path: str, min_length: int = 30, max_length: int = 150) -> List]:
+    def process_single_form_summary(self, pdf_path: str, min_length: int = 30, max_length: int = 150) -> List:
         ##
         ## Generates a summary of one form. 
         ##
