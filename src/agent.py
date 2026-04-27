@@ -1,89 +1,89 @@
 import logging
 import os
-from transformers import pipeline, Pipeline
-from typing import List, Dict, Any
 import pandas as pd
+import google.generativeai as genai
+from typing import List, Dict, Any
 
 from src.extraction import extract_text_from_pdf
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-QA_MODEL = "distilbert-base-cased-distilled-squad"
-SUMMARIZATION_MODEL = "sshleifer/distilbart-cnn-12-6"
-
 class IntelligentFormAgent:
     
-    def __init__(self, qa_model: str = QA_MODEL, summ_model: str = SUMMARIZATION_MODEL):
-        logger.info("Initializing agent in low-memory mode...")
-        try:
-            self.qa_pipeline = pipeline(
-                "question-answering", 
-                model=qa_model, 
-                device=-1 
-            )
+    def __init__(self):
+        logger.info("Initializing API-based agent...")
+        # Grab the API key from the server environment
+        api_key = os.environ.get("GEMINI_API_KEY")
+        
+        if not api_key:
+            logger.warning("GEMINI_API_KEY is missing! App will crash when making requests.")
             
-            self.summarization_pipeline = pipeline(
-                "summarization", 
-                model=summ_model, 
-                device=-1
-            )
-            logger.info("Agent initialized successfully.")
-        except Exception as e:
-            logger.error(f"Failed to load NLP models: {e}")
-            raise
+        genai.configure(api_key=api_key)
+        # Using flash because it is free, extremely fast, and handles large documents easily
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        logger.info("Agent initialized successfully.")
 
     def process_single_form_qa(self, pdf_path: str, question: str) -> Dict[str, Any]:
         logger.info(f"Processing QA for '{pdf_path}'...")
         context = extract_text_from_pdf(pdf_path)
         
         if not context:
-            logger.warning("No text extracted. Cannot perform QA.")
-            return {"error": "No text extracted from PDF."}
+            return {"answer": "No text could be extracted from this PDF.", "score": 0.0}
             
-        result = self.qa_pipeline(question=question, context=context)
-        logger.debug(f"QA Pipeline raw output: {result}")
-        return result
+        prompt = f"""
+        You are an intelligent document assistant. Use the following document text to answer the question.
+        
+        Document Text:
+        {context[:15000]} 
+        
+        Question: {question}
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            # We return a score of 1.0 because generative APIs don't use extractive confidence scores
+            return {"answer": response.text.strip(), "score": 1.0}
+        except Exception as e:
+            logger.error(f"API Error: {e}")
+            return {"answer": f"Error communicating with AI: {e}", "score": 0.0}
 
-    def process_single_form_summary(self, pdf_path: str, min_length: int = 30, max_length: int = 150) -> List:
+    def process_single_form_summary(self, pdf_path: str, min_length: int = 30, max_length: int = 150) -> List[Dict[str, str]]:
         logger.info(f"Processing summary for '{pdf_path}'...")
         context = extract_text_from_pdf(pdf_path)
         
         if not context:
-            logger.warning("No text extracted. Cannot perform summarization.")
             return []
+            
+        prompt = f"""
+        Please provide a concise summary of the following document. Keep it professional.
         
-        # Keep a safe character slice to prevent out-of-memory crashes
-        truncated_context = context[:3000] 
+        Document Text:
+        {context[:15000]}
+        """
         
-        result_list = self.summarization_pipeline(
-            truncated_context, 
-            max_length=max_length, 
-            min_length=min_length, 
-            do_sample=False,
-            truncation=True
-        )
-        logger.debug(f"Summarization raw output: {result_list}")
-        return result_list 
+        try:
+            response = self.model.generate_content(prompt)
+            # Returning as a list of dicts to perfectly match your Streamlit UI's expected format
+            return [{"summary_text": response.text.strip()}]
+        except Exception as e:
+            logger.error(f"API Error: {e}")
+            return []
 
     def process_multiple_forms_holistic(self, pdf_directory: str, question: str) -> pd.DataFrame:
-        logger.info(f"Processing holistic insights for directory '{pdf_directory}'...")
+        logger.info(f"Processing holistic insights...")
         
         try:
             pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith(".pdf")]
         except FileNotFoundError:
-            logger.error(f"Directory not found: '{pdf_directory}'")
             return pd.DataFrame(columns=["file", "question", "answer", "score"])
             
         if not pdf_files:
-            logger.warning(f"No PDF files found in '{pdf_directory}'.")
             return pd.DataFrame(columns=["file", "question", "answer", "score"])
 
         results = []
         for pdf_file in pdf_files:
             file_path = os.path.join(pdf_directory, pdf_file)
-            logger.info(f"Querying file: {pdf_file}...")
-            
             qa_result = self.process_single_form_qa(file_path, question)
             
             results.append({
@@ -93,6 +93,4 @@ class IntelligentFormAgent:
                 "score": qa_result.get("score", 0.0)
             })
         
-        df = pd.DataFrame(results)
-        logger.info("Holistic analysis complete.")
-        return df
+        return pd.DataFrame(results)
