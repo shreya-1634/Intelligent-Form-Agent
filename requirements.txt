@@ -1,14 +1,13 @@
-# Core NLP and ML
-transformers[sentencepiece]>=4.40.0 [cite: 1]
-torch>=2.0.0 [cite: 1]
+# Use the CPU-only, light version of torch
+--find-links https://download.pytorch.org/whl/cpu
+torch==2.2.1+cpu
+
+# Core NLP - keep these versions
+transformers[sentencepiece]>=4.40.0
 
 # PDF and Data Handling
-pymupdf>=1.24.0 [cite: 1]
-pandas>=2.0.0 [cite: 1]
+pymupdf>=1.24.0
+pandas>=2.0.0
 
-# Web Interface (Required for Render Deployment)
+# Web Interface
 streamlit>=1.30.0
-
-# Testing
-pytest>=8.0.0 [cite: 1]
-pytest-mock>=3.12.0 [cite: 1]
