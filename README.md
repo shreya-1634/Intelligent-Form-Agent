@@ -113,7 +113,14 @@ Why API over Local Models? Originally prototyped with local Hugging Face transfo
 
 Handling 429 API Errors: Free-tier AI APIs have strict Requests-Per-Minute (RPM) limits. The agent.py file includes a custom exponential backoff loop. If a batch process triggers a limit, the agent silently pauses for a few seconds before retrying, rather than failing the entire run.
 
+## 📌 Future Improvements
+* **RAG Integration (Cost Optimization):** Implement a lightweight vector database (e.g., ChromaDB) to chunk PDFs and send only relevant paragraphs to the API, drastically reducing token usage.
 
+* **Multimodal Processing (Vision):** Upgrade the pipeline to pass page images directly to Gemini 2.0 Flash, enabling the agent to read scanned documents, charts, and handwritten forms.
+
+* **One-Click CSV Export (Analyst Workflow):** Add Streamlit download buttons to the Holistic Insights tab, allowing users to export the generated comparison data directly to Excel or Tableau.
+
+* **Session State Management:** Cache document uploads and chat history using Streamlit's st.session_state to enable seamless tab navigation without data loss or re-processing.
 
 ## 📧 Contact
 Shreya Priyadrshni
