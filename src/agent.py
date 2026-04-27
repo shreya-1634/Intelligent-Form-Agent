@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # --- Updated to latest stable models ---
-MODEL_NAME = "gemini-2.0-flash" 
+MODEL_NAME = "gemini-3-flash-preview" 
 
 class IntelligentFormAgent:
     
