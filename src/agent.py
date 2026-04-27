@@ -28,25 +28,26 @@ class IntelligentFormAgent:
     ## An agent capable of reading, extracting, and explaining forms.
     ##
     
-    def __init__(self, qa_model: str = QA_MODEL, summ_model: str = SUMMARIZATION_MODEL):
-    logger.info("Initializing agent in low-memory mode...")
-    try:
-        # QA Pipeline: Use low_cpu_mem_usage if supported
-        self.qa_pipeline = pipeline(
-            "question-answering", 
-            model=qa_model, 
-            device=-1 # Force CPU [cite: 189, 192]
-        )
-        
-        # Summarization Pipeline
-        self.summarization_pipeline = pipeline(
-            "summarization", 
-            model=summ_model, 
-            device=-1
-        )
-    except Exception as e:
-        logger.error(f"Failed to load: {e}")
-        raise
+   def __init__(self, qa_model: str = QA_MODEL, summ_model: str = SUMMARIZATION_MODEL):
+        logger.info("Initializing agent in low-memory mode...")
+        try:
+            # QA Pipeline: Use low_cpu_mem_usage if supported
+            self.qa_pipeline = pipeline(
+                "question-answering", 
+                model=qa_model, 
+                device=-1 # Force CPU
+            )
+            
+            # Summarization Pipeline
+            self.summarization_pipeline = pipeline(
+                "summarization", 
+                model=summ_model, 
+                device=-1
+            )
+            logger.info("Agent initialized successfully.")
+        except Exception as e:
+            logger.error(f"Failed to load NLP models: {e}")
+            raise
 
     def process_single_form_qa(self, pdf_path: str, question: str) -> Dict[str, Any]:
         ##
