@@ -1,80 +1,80 @@
-##
-## Main CLI Entry Point
-##
-## This script provides a command-line interface to run the
-## IntelligentFormAgent, as required by the assignment.
-## It uses argparse to handle the different agent functionalities.[4, 5, 6, 7, 8]
-##
-## Example Usage (from the project root folder):
-## $ python -m src.main qa --path "data/dummy.pdf" --question "What is the total?"
-## $ python -m src.main summarize --path "data/my-large-form.pdf"
-## $ python -m src.main holistic --dir "data/" --question "What is the total?"
-##
-
-import argparse
-import logging
-import sys
-
-## This import works because we run this file as a module
+import streamlit as st
+import pandas as pd
+import os
 from src.agent import IntelligentFormAgent
 
-## Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Page configuration
+st.set_page_config(page_title="Intelligent Form Agent", layout="wide")
 
-def main(args: argparse.Namespace):
-    ##
-    ## Main logic dispatcher.
-    ## Initializes the agent and calls the correct method based on the sub-command.
-    ##
-    try:
-        agent = IntelligentFormAgent()
-    except Exception as e:
-        logging.error(f"Failed to initialize the agent. Aborting. Error: {e}")
-        sys.exit(1)
+@st.cache_resource
+def load_agent():
+    # Caching the agent prevents reloading the multi-GB models on every interaction
+    return IntelligentFormAgent()
 
-    ## Dispatch to the correct function based on the 'command'
-    if args.command == 'qa':
-        result = agent.process_single_form_qa(args.path, args.question)
-        print("\n--- QA Result ---")
-        print(f"Question: {args.question}")
-        print(f"Answer:   {result.get('answer', 'N/A')}")
-        print(f"Score:    {result.get('score', 0.0):.4f}")
+def main():
+    st.title("📄 Intelligent Form Agent")
+    st.markdown("Upload your PDF forms to extract summaries, ask questions, or perform holistic analysis.")
 
-    elif args.command == 'summarize':
-        ## This logic is corrected based on your working Colab script
-        result_list = agent.process_single_form_summary(args.path)
-        print("\n--- Summary Result ---")
-        if result_list and len(result_list) > 0:
-            ## The summarization pipeline returns a list of dictionaries
-            print(result_list.get('summary_text', 'N/A'))
-        else:
-            print("No summary could be generated.")
+    # Initialize Agent
+    with st.spinner("Loading NLP Models..."):
+        agent = load_agent()
 
-    elif args.command == 'holistic':
-        df_results = agent.process_multiple_forms_holistic(args.dir, args.question)
-        print(f"\n--- Holistic Analysis for Question: '{args.question}' ---")
-        print(df_results.to_string())
+    # Sidebar for File Uploads
+    st.sidebar.header("Upload Center")
+    uploaded_files = st.sidebar.file_uploader(
+        "Choose PDF files", type="pdf", accept_multiple_files=True
+    )
+
+    if not uploaded_files:
+        st.info("Please upload one or more PDF files in the sidebar to begin.")
+        return
+
+    # Save uploaded files to a temporary directory for the agent to read
+    temp_dir = "uploaded_pdfs"
+    os.makedirs(temp_dir, exist_ok=True)
+    file_paths = []
+    for uploaded_file in uploaded_files:
+        path = os.path.join(temp_dir, uploaded_file.name)
+        with open(path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        file_paths.append(path)
+
+    # UI Tabs for different functionalities
+    tab1, tab2, tab3 = st.tabs(["Single QA", "Summarization", "Holistic Insights"])
+
+    with tab1:
+        st.header("Ask a Question")
+        target_file = st.selectbox("Select a file", [f.name for f in uploaded_files])
+        question = st.text_input("Enter your question", placeholder="e.g., What is the total amount?")
+        
+        if st.button("Get Answer"):
+            if question:
+                target_path = os.path.join(temp_dir, target_file)
+                result = agent.process_single_form_qa(target_path, question)
+                st.success(f"**Answer:** {result.get('answer', 'N/A')}")
+                st.caption(f"Confidence Score: {result.get('score', 0.0):.4f}")
+            else:
+                st.warning("Please enter a question.")
+
+    with tab2:
+        st.header("Generate Summary")
+        sum_file = st.selectbox("Select file to summarize", [f.name for f in uploaded_files])
+        if st.button("Summarize"):
+            sum_path = os.path.join(temp_dir, sum_file)
+            summary_list = agent.process_single_form_summary(sum_path)
+            if summary_list:
+                # The pipeline returns a list of dicts
+                st.write(summary_list[0].get('summary_text', "No summary generated."))
+            else:
+                st.error("Could not generate summary.")
+
+    with tab3:
+        st.header("Holistic Analysis")
+        h_question = st.text_input("Question for all files", placeholder="e.g., Are there any recurring dates?")
+        if st.button("Analyze All"):
+            with st.spinner("Analyzing across all documents..."):
+                df_results = agent.process_multiple_forms_holistic(temp_dir, h_question)
+                st.dataframe(df_results, use_container_width=True)
 
 if __name__ == "__main__":
-    ## This pattern [5, 6, 7] makes the script runnable
-    parser = argparse.ArgumentParser(description="Intelligent Form Agent CLI.")
-    
-    ## We use sub-parsers [4, 8] for a clean command structure
-    subparsers = parser.add_subparsers(dest="command", required=True, help="The action to perform")
-
-    ## --- QA Sub-parser ---
-    qa_parser = subparsers.add_parser('qa', help="Ask a question about a single form")
-    qa_parser.add_argument('--path', type=str, required=True, help="Path to the PDF form")
-    qa_parser.add_argument('--question', type=str, required=True, help="The question to ask")
-
-    ## --- Summarize Sub-parser ---
-    summ_parser = subparsers.add_parser('summarize', help="Generate a summary of a single form")
-    summ_parser.add_argument('--path', type=str, required=True, help="Path to the PDF form")
-
-    ## --- Holistic Sub-parser ---
-    holistic_parser = subparsers.add_parser('holistic', help="Ask a question across multiple forms")
-    holistic_parser.add_argument('--dir', type=str, required=True, help="Directory containing PDF forms")
-    holistic_parser.add_argument('--question', type=str, required=True, help="The *same* question to ask all forms")
-
-    parsed_args = parser.parse_args()
-    main(parsed_args)
+    main()
