@@ -101,7 +101,7 @@ class IntelligentFormAgent:
             logger.warning(f"No PDF files found in '{pdf_directory}'.")
             return pd.DataFrame(columns=["file", "question", "answer", "score"])
 
-        results =  ## <-- This is the corrected line from your Colab
+        results =  []
         for pdf_file in pdf_files:
             file_path = os.path.join(pdf_directory, pdf_file)
             logger.info(f"Querying file: {pdf_file}...")
