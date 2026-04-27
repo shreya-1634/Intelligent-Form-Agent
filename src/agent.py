@@ -9,6 +9,8 @@ from src.extraction import extract_text_from_pdf
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+MODEL_NAME = "gemini-2.0-flash"
+
 class IntelligentFormAgent:
     
     def __init__(self):
