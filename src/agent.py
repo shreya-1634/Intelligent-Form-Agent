@@ -20,7 +20,7 @@ class IntelligentFormAgent:
             self.qa_pipeline = pipeline(
                 "question-answering", 
                 model=qa_model, 
-                device=-1 # Force CPU for low memory limits
+                device=-1 
             )
             
             self.summarization_pipeline = pipeline(
@@ -45,7 +45,7 @@ class IntelligentFormAgent:
         logger.debug(f"QA Pipeline raw output: {result}")
         return result
 
-   def process_single_form_summary(self, pdf_path: str, min_length: int = 30, max_length: int = 150) -> List:
+    def process_single_form_summary(self, pdf_path: str, min_length: int = 30, max_length: int = 150) -> List:
         logger.info(f"Processing summary for '{pdf_path}'...")
         context = extract_text_from_pdf(pdf_path)
         
@@ -53,7 +53,7 @@ class IntelligentFormAgent:
             logger.warning("No text extracted. Cannot perform summarization.")
             return []
         
-        # Keep a safe character slice to prevent out-of-memory crashes on Streamlit
+        # Keep a safe character slice to prevent out-of-memory crashes
         truncated_context = context[:3000] 
         
         result_list = self.summarization_pipeline(
@@ -61,10 +61,10 @@ class IntelligentFormAgent:
             max_length=max_length, 
             min_length=min_length, 
             do_sample=False,
-            truncation=True  # <--- THIS IS THE MAGIC FIX
+            truncation=True
         )
         logger.debug(f"Summarization raw output: {result_list}")
-        return result_list
+        return result_list 
 
     def process_multiple_forms_holistic(self, pdf_directory: str, question: str) -> pd.DataFrame:
         logger.info(f"Processing holistic insights for directory '{pdf_directory}'...")
