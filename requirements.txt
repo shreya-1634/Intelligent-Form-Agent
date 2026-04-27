@@ -1,11 +1,5 @@
-# Use the CPU-only version for the 512MB limit
---find-links https://download.pytorch.org/whl/cpu
-torch
-
-# Core NLP and PDF Handling
+torch --index-url https://download.pytorch.org/whl/cpu
 transformers[sentencepiece]
 pymupdf
 pandas
-
-# Web Interface
 streamlit
