@@ -1,13 +1,11 @@
-# Use the CPU-only, light version of torch
+# Use the CPU-only version for the 512MB limit
 --find-links https://download.pytorch.org/whl/cpu
-torch==2.2.1+cpu
+torch
 
-# Core NLP - keep these versions
-transformers[sentencepiece]>=4.40.0
-
-# PDF and Data Handling
-pymupdf>=1.24.0
-pandas>=2.0.0
+# Core NLP and PDF Handling
+transformers[sentencepiece]
+pymupdf
+pandas
 
 # Web Interface
-streamlit>=1.30.0
+streamlit
