@@ -3,14 +3,9 @@ import pandas as pd
 import os
 import sys
 
-# --- FIX: Add the project root to Python's path ---
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Now Python knows what "src" means!
 from src.agent import IntelligentFormAgent
-
-# Page configuration
-st.set_page_config(page_title="Intelligent Form Agent", layout="wide")
 
 @st.cache_resource
 def load_agent():
