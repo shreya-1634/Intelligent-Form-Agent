@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Using the ultra-fast preview model
-MODEL_NAME = "gemini-3-flash-preview" 
+MODEL_NAME = "gemini-2.0-flash" 
 
 class IntelligentFormAgent:
     
